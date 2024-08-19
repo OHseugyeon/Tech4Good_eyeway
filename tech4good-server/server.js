@@ -1,7 +1,7 @@
-require('dotenv').config();
-const express = require('express');
-const cors = require('cors');
-const { ImageAnnotatorClient } = require('@google-cloud/vision');
+import 'dotenv/config'; // dotenv 패키지를 사용하여 환경 변수 로드
+import express from 'express';
+import cors from 'cors';
+import { OpenAI } from 'openai';
 
 const app = express();
 const port = 3000;
@@ -9,8 +9,8 @@ const port = 3000;
 app.use(cors());
 app.use(express.json());
 
-const client = new ImageAnnotatorClient({
-  keyFilename: 'eyeway-api-key.json',
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
 });
 
 app.get('/', (req, res) => {
@@ -20,28 +20,32 @@ app.get('/', (req, res) => {
 app.post('/generate-alt-text', async (req, res) => {
   const { imageUrl } = req.body;
   
-  console.log('Received image URL:', imageUrl); // 이미지 URL 로그 추가
+  console.log('Received image URL:', imageUrl);
 
   try {
-    const [result] = await client.labelDetection(imageUrl);
-    const labels = result.labelAnnotations;
+    const response = await openai.chat.completions.create({
+      model: "gpt-4-turbo", // 또는 "gpt-4o"
+      messages: [
+        {
+          role: "user",
+          content: [
+            { type: "text", text: "이 그림을 한글로 설명해줘" },
+            {
+              type: "image_url",
+              image_url: { url: imageUrl }
+            }
+          ]
+        }
+      ],
+      max_tokens: 300
+    });
 
-    if (labels.length > 0) {
-      const altText = labels.map(label => label.description).join(', ');
-      res.json({ altText });
-    } else {
-      res.json({ altText: '이미지에서 대체 텍스트를 생성할 수 없습니다.' });
-    }
+    const altText = response.choices[0].message.content.trim();
+    res.json({ altText });
   } catch (error) {
     console.error('Error generating alt text:', error);
     res.status(500).json({ error: 'Failed to generate alt text' });
   }
-});
-
-
-// 여기에 추가된 라우팅: 정의되지 않은 모든 경로에 대해 기본 응답 처리
-app.use((req, res) => {
-  res.status(404).send('Not Found');
 });
 
 app.listen(port, () => {

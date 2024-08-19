@@ -10,6 +10,8 @@ export async function generateAltText(image) {
     });
 
     const data = await response.json();
+    console.log(data.altText);
+    // 'altText' 속성이 응답 데이터에 포함되어 있는지 확인하고 반환
     return data.altText || '대체 텍스트를 생성할 수 없습니다.';
   } catch (error) {
     console.error('Error generating alt text:', error);
