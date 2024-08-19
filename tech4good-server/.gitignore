@@ -1,0 +1,17 @@
+# Node modules
+node_modules/
+
+# Service account key
+eyeway-api-key.json
+
+# Environment variables
+.env
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# OS generated files
+.DS_Store
+Thumbs.db
