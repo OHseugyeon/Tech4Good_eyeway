@@ -1,7 +1,7 @@
 import React, { useState, useEffect, forwardRef, useImperativeHandle } from 'react';
 import '../App.css';
 
-const TTSOptions = forwardRef(({ altText }, ref) => {
+const TTSOptions = forwardRef(({ altText, imgSrc }, ref) => {  // imgSrc를 추가합니다.
   const [voices, setVoices] = useState([]);
   const [selectedVoice, setSelectedVoice] = useState(null);
   const [volume, setVolume] = useState(1);
@@ -14,8 +14,8 @@ const TTSOptions = forwardRef(({ altText }, ref) => {
     const loadVoices = () => {
       const voiceList = synth.getVoices();
       const filteredVoices = voiceList.filter(voice =>
-        (voice.lang.includes('ko') && (voice.name.includes('female') || voice.name.includes('male'))) ||
-        (voice.lang.includes('en') && (voice.name.includes('female') || voice.name.includes('male')))
+        (voice.lang.includes('ko') && (voice.name.toLowerCase().includes('female') || voice.name.toLowerCase().includes('male'))) ||
+        (voice.lang.includes('en') && (voice.name.toLowerCase().includes('female') || voice.name.toLowerCase().includes('male')))
       );
 
       const uniqueVoices = [
@@ -62,7 +62,6 @@ const TTSOptions = forwardRef(({ altText }, ref) => {
     setRate(prevRate => Math.max(0.5, Math.min(2, prevRate + increment)));
   };
 
-  // TTS 실행 함수
   const speakText = (text) => {
     if (!selectedVoice) {
       alert('음성을 선택해 주세요.');
@@ -78,7 +77,6 @@ const TTSOptions = forwardRef(({ altText }, ref) => {
     window.speechSynthesis.speak(msg);
   };
 
-  // 외부에서 speakText 함수를 호출할 수 있게 함
   useImperativeHandle(ref, () => ({
     speakText
   }));
@@ -89,8 +87,11 @@ const TTSOptions = forwardRef(({ altText }, ref) => {
       <div className="custom-select-container">
         <div className="custom-select">
           <select
-            value={selectedVoice?.name || ''}
-            onChange={(e) => setSelectedVoice(voices.find(voice => voice.name === e.target.value)?.voice)}
+            value={voices.find(voiceItem => voiceItem.voice === selectedVoice)?.name || ''}
+            onChange={(e) => {
+              const selectedVoiceItem = voices.find(voiceItem => voiceItem.name === e.target.value);
+              setSelectedVoice(selectedVoiceItem?.voice || null);
+            }}
             className="custom-dropdown"
           >
             <option value="">음성을 선택하세요</option>
@@ -102,6 +103,15 @@ const TTSOptions = forwardRef(({ altText }, ref) => {
           </select>
         </div>
       </div>
+
+      <div className="image-placeholder">
+        {imgSrc && <img src={imgSrc} alt="팝업 이미지" className="popup-image" />}
+      </div>
+
+      <div className="alt-text-placeholder">
+        <p>{altText}</p>
+      </div>
+
       <div className="slider-container">
         <label>음량</label>
         <div className="slider-controls">

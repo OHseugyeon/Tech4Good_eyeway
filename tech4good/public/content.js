@@ -1,31 +1,6 @@
+import { generateAltText } from './api.js';
+
 let hoverTimeout;
-
-// 이미지의 대체 텍스트를 AI로 생성하는 함수
-async function generateAltText(image) {
-  try {
-    const response = await fetch('https://drinkguide.store/generate-alt-text', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ imageUrl: image.src }),
-    });
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    const data = await response.json();
-    if (!data.altText) {
-      throw new Error('AI did not return alt text');
-    }
-
-    return data.altText;
-  } catch (error) {
-    console.error('Error generating alt text:', error);
-    return '대체 텍스트를 생성할 수 없습니다.';
-  }
-}
 
 // TTS로 대체 텍스트를 읽어주는 함수
 function speakText(text) {
@@ -33,26 +8,27 @@ function speakText(text) {
   window.speechSynthesis.speak(msg);
 }
 
-// 이미지 위에 마우스를 올렸을 때 처리하는 함수
-async function handleMouseOver(event) {
+// 이미지에 마우스를 올렸을 때 팝업창에 이미지와 대체 텍스트를 표시하는 함수
+async function showImageInPopup(event) {
   const image = event.target;
-  if (image.tagName.toLowerCase() === 'img') {
-    hoverTimeout = setTimeout(async () => {
-      try {
-        const altText = await generateAltText(image);
+  
+  hoverTimeout = setTimeout(async () => {
+    const altText = await generateAltText(image);
 
-        // TTS 기능으로 대체 텍스트 읽기
-        console.log('TTS speaking:', altText);
-        speakText(altText);
-      } catch (error) {
-        console.error('Error in handleMouseOver:', error);
-      }
-    }, 1000); // 1초 동안 머문 경우에만 대체 텍스트 생성
-  }
+    // TTS 기능으로 대체 텍스트 읽기
+    console.log('TTS speaking:', altText);
+    speakText(altText);
+    
+    // 팝업 창으로 이미지와 대체 텍스트 전달
+    chrome.runtime.sendMessage({
+      accessibleDescription: altText,
+      imgSrc: image.src
+    });
+  }, 500); // 마우스를 올린 지 500ms 후에 팝업을 표시하도록 설정
 }
 
-// 이미지 위에서 마우스를 뗐을 때 처리하는 함수
-function handleMouseOut() {
+// 이미지에서 마우스가 벗어났을 때 타임아웃을 제거하는 함수
+function hideImageFromPopup(event) {
   clearTimeout(hoverTimeout);
 }
 
@@ -63,8 +39,8 @@ function addImageHoverListeners(context = document) {
     // 중복 리스너 추가 방지
     if (!image.dataset.listenerAdded) {
       console.log('Adding listener to image:', image.src);
-      image.addEventListener('mouseover', handleMouseOver);
-      image.addEventListener('mouseout', handleMouseOut);
+      image.addEventListener('mouseenter', showImageInPopup);
+      image.addEventListener('mouseleave', hideImageFromPopup);
       image.dataset.listenerAdded = true; // 리스너 추가 플래그
     }
   });
@@ -76,12 +52,16 @@ function addListenersToIframes() {
   iframes.forEach(iframe => {
     try {
       const iframeDocument = iframe.contentDocument || iframe.contentWindow.document;
-      addImageHoverListeners(iframeDocument);
+      // Check if we can access the iframe's document
+      if (iframeDocument && iframeDocument.location.origin === window.location.origin) {
+        addImageHoverListeners(iframeDocument);
+      }
     } catch (e) {
       console.warn('Cannot access iframe contents:', e);
     }
   });
 }
+
 
 // 페이지 로드 시 이미지 및 iframe 내부 이미지에 이벤트 리스너 추가 및 동적 요소 감지
 window.addEventListener('load', () => {
