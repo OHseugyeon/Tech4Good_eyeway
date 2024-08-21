@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { generateAltText } from '../api'; // generateAltText 함수가 정의된 파일로부터 가져옵니다.
+import '../App.css';
 
 function ImageComponent() {
   const [altText, setAltText] = useState('');

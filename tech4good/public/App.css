@@ -1,0 +1,220 @@
+/* 기존 스타일 */
+body {
+    font-family: 'Noto Sans KR', sans-serif;
+    color: #333;
+    margin: 0;
+    padding: 0;
+    background-color: #fff;
+}
+
+.popup-container {
+    width: 340px;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.title {
+    font-size: 24px;
+    font-weight: bold;
+    color: #FF6F00;
+    margin: 0;
+}
+
+.close-button {
+    background-color: #FF6F00;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    color: white;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.close-button:hover {
+    background-color: #FFE4B5;
+    color: #FF6F00;
+}
+
+.subtitle {
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+    margin-top: 20px;
+}
+
+.voice-select {
+    margin-bottom: 20px;
+}
+
+.voice-select label {
+    font-size: 14px;
+    color: #FF6F00;
+    margin-bottom: 5px;
+    font-weight: bold;
+    display: block;
+}
+
+/* 드롭다운 스타일 */
+.custom-dropdown {
+    width: 100%;
+    padding: 12px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    appearance: none;
+    background-color: #f9f9f9;
+    background-image: url('icons/down_arrow.png'); /* 드롭다운 화살표 아이콘 경로 */
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    position: relative;
+}
+
+.custom-dropdown:focus {
+    border-color: #FF6F00;
+    outline: none;
+}
+
+/* 드롭다운 아이템 스타일 */
+.custom-dropdown option {
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    background-color: #fff;
+    color: #333;
+}
+
+/* 아이템에 아이콘 추가 */
+.custom-dropdown option::before {
+    content: url('icons/small_eye.png'); /* 아이콘 파일 경로로 변경 */
+    display: inline-block;
+    margin-right: 10px;
+    vertical-align: middle;
+}
+
+.custom-dropdown option:hover {
+    background-color: #FFE4B5;
+    color: #FF6F00;
+}
+
+/* 드롭다운이 열렸을 때 스타일 */
+.custom-select-container {
+    position: relative;
+    width: 100%;
+}
+
+.custom-select {
+    position: relative;
+    z-index: 10;
+}
+
+/* 드롭다운 컨테이너 스타일 */
+.dropdown-container {
+    position: relative;
+    width: 100%;
+}
+
+.dropdown-container select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background: url('icons/down_arrow.png') no-repeat right 10px center;
+    padding-right: 30px;
+}
+
+/* 슬라이더 관련 스타일 */
+.slider-container {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    margin-bottom: 10px;
+    width: 100%;
+    text-align: left;
+}
+
+.slider-container label {
+    font-size: 14px;
+    color: #FF6F00;
+    font-weight: bold;
+    margin-bottom: 5px;
+    align-self: flex-start;
+}
+
+.slider-controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.slider-container input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    background-color: #FF6F00;
+    height: 6px;
+    border-radius: 5px;
+    width: 100%;
+}
+
+.slider-container input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    background-color: #FF6F00;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.slider-button {
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    cursor: pointer;
+}
+
+.slider-button img {
+    width: 24px;
+    height: 24px;
+    display: block;
+}
+
+/* 버튼 스타일 */
+button {
+    width: 100%;
+    padding: 15px;
+    background-color: #FF6F00;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 20px;
+}
+
+button2 {
+    width: 20%;
+    padding: 10px;
+    background-color: none;
+    border: none;
+    cursor: pointer;
+    margin-top: 18px;
+}
+
+button:hover {
+    background-color: #e65a00;
+}

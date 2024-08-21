@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import '../App.css';
 
 function ImageAltEditor({ onGenerateAltText }) {
   const [altText, setAltText] = useState('여기에 생성된 대체 텍스트가 표시됩니다.');

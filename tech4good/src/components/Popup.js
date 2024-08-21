@@ -1,53 +1,54 @@
 import React, { useState, useEffect } from 'react';
-import TTSOptions from './TTSOptions';
 import '../App.css';
+import TTSOptions from './TTSOptions';
 
 function Popup() {
-  const [generatedAltText, setGeneratedAltText] = useState('여기에 생성된 대체 텍스트가 표시됩니다.');
-  const [imageSrc, setImageSrc] = useState('placeholder-image.png'); // 기본 이미지
+    const [accessibleDescription, setAccessibleDescription] = useState('여기에 생성된 접근성 설명이 표시됩니다.');
 
-  // 대체 텍스트를 업데이트하는 함수
-  const handleAltTextUpdate = (altText, imgSrc) => {
-    setGeneratedAltText(altText);
-    setImageSrc(imgSrc);
-  };
+    useEffect(() => {
+        // 메시지 리스너 설정
+        const messageListener = (request) => {
+            if (request.accessibleDescription && request.imgSrc) {
+                setAccessibleDescription(request.accessibleDescription);
+            }
+        };
 
-  useEffect(() => {
-    // 메시지를 통해 이미지 URL과 대체 텍스트를 받아옵니다.
-    chrome.runtime.onMessage.addListener((request) => {
-      if (request.altText && request.imgSrc) {
-        handleAltTextUpdate(request.altText, request.imgSrc);
-      }
-    });
-  }, []);
+        chrome.runtime.onMessage.addListener(messageListener);
 
-  return (
-    <div className="popup-container">
-      <div className="header">
-        <h1 className="title">AltVision</h1>
-        <button className="close-button" onClick={() => window.close()}>✖</button>
-      </div>
+        // 컴포넌트 언마운트 시 메시지 리스너 제거
+        return () => {
+            chrome.runtime.onMessage.removeListener(messageListener);
+        };
+    }, []);
 
-      <hr className="divider" />
+    return (
+        <div className="popup-container">
+            <div className="header">
+                <h1 className="title">noongil</h1>
+                <button className="close-button" onClick={() => window.close()}>✖</button>
+            </div>
 
-      <div className="section">
-        <h2 className="subtitle">생성된 대체 텍스트를 확인하세요</h2>
-        <div className="image-placeholder">
-          <div className="image">
-            <img src={imageSrc} alt="대체 텍스트가 생성된 이미지" />
-          </div>
-          <div className="alt-text">
-            <h3>{generatedAltText}</h3>
-          </div>
+            <hr className="divider" />
+
+            <div className="section">
+                <h2 className="subtitle">생성된 접근성 설명을 확인하세요</h2>
+                <div className="image-placeholder">
+                    <div className="image">
+                        <img src="icons/example_img.png" alt="접근성 설명이 생성된 이미지" />
+                    </div>
+                    <div className="alt-text">
+                        <h3>Output</h3>
+                        <p>{accessibleDescription}</p>
+                    </div>
+                </div>
+            </div>
+
+            <div className="section">
+                <h2 className="subtitle">안내 음성 옵션을 설정해 보세요</h2>
+                <TTSOptions altText={accessibleDescription} />
+            </div>
         </div>
-      </div>
-
-      <div className="section">
-        <h2 className="subtitle">안내 음성 옵션을 설정해 보세요</h2>
-        <TTSOptions altText={generatedAltText} />
-      </div>
-    </div>
-  );
+    );
 }
 
 export default Popup;

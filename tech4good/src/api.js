@@ -1,7 +1,7 @@
 // src/api.js
 export async function generateAltText(image) {
   try {
-    const response = await fetch('http://localhost:3000/generate-alt-text', {
+    const response = await fetch('https://drinkguide.store/generate-alt-text', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
